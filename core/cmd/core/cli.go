@@ -3,6 +3,7 @@ package main
 import (
 	"bufio"
 	"context"
+	"core/internal/chat"
 	"errors"
 	"fmt"
 	"os"
@@ -21,7 +22,7 @@ const (
 	cmdExit = ":q"
 )
 
-func cli_loop(ctx context.Context, chat *Chat) error {
+func cli_loop(ctx context.Context, chatSvc *chat.Chat) error {
 	scanner := bufio.NewScanner(os.Stdin)
 	fmt.Println(msgWelcome)
 	fmt.Printf("[type '%s' to quit]\n", cmdExit)
@@ -36,25 +37,30 @@ func cli_loop(ctx context.Context, chat *Chat) error {
 		input := scanner.Text()
 
 		if strings.TrimSpace(input) == cmdExit {
-			fmt.Printf("tokens spent: %d", chat.usage.Total)
+			fmt.Printf("tokens spent: %d\n", chatSvc.Usage.Total)
 			fmt.Println(msgGoodbye)
 			break
 		}
 
 		fmt.Println(msgStatusThinking)
 
-		res, err := chat.ask(ctx, input)
+		res, err := chatSvc.Ask(ctx, input)
 		if err != nil {
 			switch {
-			case errors.Is(err, ErrRequest):
+			case errors.Is(err, chat.ErrRequest):
 				fmt.Println(msgeErrRequest)
-			case errors.Is(err, ErrEmpty):
+			case errors.Is(err, chat.ErrEmpty):
 				fmt.Println(msgeErrEmpty)
 			}
 			break
 		}
 
-		fmt.Println(res)
+		fmt.Println(res.Text)
+		fmt.Println("mood:", res.Mood)
+		if res.Compact != "" {
+			fmt.Println("summury")
+			fmt.Println(res.Compact)
+		}
 	}
 
 	if err := scanner.Err(); err != nil {
