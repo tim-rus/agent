@@ -51,7 +51,7 @@ func main() {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	chat := NewChat(oai, "qwen/qwen3.7-flaseh", "будь краток")
+	chat := NewChat(oai, "qwen/qwen3.7-flash", "будь краток")
 
 	if err := cli_loop(ctx, chat); err != nil {
 		slog.Error("chat returned error", "err", err)
