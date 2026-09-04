@@ -5,4 +5,4 @@ tasks:
   run:core:
     summary: Runs core in dev-mode
     dir: core
-    cmd: go run ./cmd/core
+    cmd: go run ./cmd/core -e ../config/.core.local.env
