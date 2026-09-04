@@ -65,9 +65,13 @@ func main() {
 	}
 
 	slog.Info("completion request succeed", "choices", res.Choices[0].Message.Content, "usage", res.Usage.TotalTokens)
+
+	if err := chat(); err != nil {
+		slog.Error("chat returned error", "err", err)
+	}
 }
 
-//
+// utils
 
 func loadArgs() Args {
 	argsRaw := arguments.Read()
