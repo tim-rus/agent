@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"core/internal/platform/arguments"
 	"fmt"
 	"log/slog"
@@ -8,6 +9,8 @@ import (
 
 	"github.com/caarlos0/env/v11"
 	"github.com/joho/godotenv"
+	"github.com/openai/openai-go/v3"
+	"github.com/openai/openai-go/v3/option"
 )
 
 //
@@ -17,7 +20,8 @@ type Args struct {
 }
 
 type Env struct {
-	OpenAIKey string `env:"OPENAI_KEY"`
+	OpenAIKey     string `env:"OPENAI_KEY"`
+	OpenAIBaseURL string `env:"OPENAI_BASE_URL"`
 }
 
 //
@@ -36,6 +40,31 @@ func main() {
 	}
 
 	slog.Info("read env", "env", env)
+
+	//
+
+	oai := openai.NewClient(
+		option.WithAPIKey(env.OpenAIKey),
+		option.WithBaseURL(env.OpenAIBaseURL),
+	)
+
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
+	res, err := oai.Chat.Completions.New(ctx, openai.ChatCompletionNewParams{
+		Model: "qwen/qwen3.7-flash",
+		Messages: []openai.ChatCompletionMessageParamUnion{
+			openai.SystemMessage("будь краток"),
+			openai.UserMessage("кто ты?"),
+		},
+	}, option.WithJSONSet("enable_thinking", false))
+
+	if err != nil {
+		slog.Error("failed to request completion", "err", err)
+		os.Exit(1)
+	}
+
+	slog.Info("completion request succeed", "choices", res.Choices[0].Message.Content, "usage", res.Usage.TotalTokens)
 }
 
 //
