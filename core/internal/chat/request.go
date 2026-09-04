@@ -6,6 +6,7 @@ import (
 
 	"github.com/openai/openai-go/v3"
 	"github.com/openai/openai-go/v3/option"
+	"github.com/openai/openai-go/v3/shared"
 )
 
 func (chat *Chat) request(ctx context.Context, msg string) (*openai.ChatCompletion, error) {
@@ -17,6 +18,14 @@ func (chat *Chat) request(ctx context.Context, msg string) (*openai.ChatCompleti
 		openai.ChatCompletionNewParams{
 			Model:    chat.model,
 			Messages: u,
+			ResponseFormat: openai.ChatCompletionNewParamsResponseFormatUnion{
+				OfJSONSchema: &shared.ResponseFormatJSONSchemaParam{
+					JSONSchema: shared.ResponseFormatJSONSchemaJSONSchemaParam{
+						Schema: responseSchema,
+						Strict: openai.Bool(true),
+					},
+				},
+			},
 		},
 		option.WithJSONSet("enable_thinking", false),
 	)

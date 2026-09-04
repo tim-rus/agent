@@ -2,6 +2,7 @@ package chat
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"log/slog"
 
@@ -11,8 +12,9 @@ import (
 //
 
 var (
-	ErrRequest = errors.New("request error")
-	ErrEmpty   = errors.New("empty result")
+	ErrRequest   = errors.New("request error")
+	ErrEmpty     = errors.New("empty result")
+	ErrUnmarshal = errors.New("decoding error")
 )
 
 //
@@ -61,11 +63,11 @@ func New(client openai.Client, model string, systemPromt string) *Chat {
 
 //
 
-func (chat *Chat) Ask(ctx context.Context, q string) (string, error) {
+func (chat *Chat) Ask(ctx context.Context, q string) (*Response, error) {
 	res, err := chat.request(ctx, q)
 	if err != nil {
 		slog.Error("request error", "err", err)
-		return "", ErrRequest
+		return nil, ErrRequest
 	}
 
 	chat.Usage.Total += uint64(res.Usage.TotalTokens)
@@ -74,7 +76,7 @@ func (chat *Chat) Ask(ctx context.Context, q string) (string, error) {
 
 	if len(res.Choices) < 1 {
 		slog.Warn("request returned empty result", "res", res)
-		return "", ErrEmpty
+		return nil, ErrEmpty
 	}
 
 	content := res.Choices[0].Message.Content
@@ -86,6 +88,13 @@ func (chat *Chat) Ask(ctx context.Context, q string) (string, error) {
 
 	chat.history = append(chat.history, msg)
 
-	return content, nil
+	response := Response{}
+	if err := json.Unmarshal([]byte(content), &response); err != nil {
+		slog.Error("unmarshalling error", "err", err)
+		return nil, ErrEmpty
+	}
 
+	return &response, nil
 }
+
+//

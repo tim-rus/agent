@@ -55,7 +55,8 @@ func cli_loop(ctx context.Context, chatSvc *chat.Chat) error {
 			break
 		}
 
-		fmt.Println(res)
+		fmt.Println(res.Text)
+		fmt.Println("mood:", res.Mood)
 	}
 
 	if err := scanner.Err(); err != nil {
