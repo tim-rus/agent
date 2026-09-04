@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"core/internal/chat"
 	"core/internal/platform/arguments"
 	"fmt"
 	"log/slog"
@@ -51,9 +52,9 @@ func main() {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	chat := NewChat(oai, "qwen/qwen3.7-flash", "будь краток")
+	chatSvc := chat.New(oai, "qwen/qwen3.7-flash", "будь краток")
 
-	if err := cli_loop(ctx, chat); err != nil {
+	if err := cli_loop(ctx, chatSvc); err != nil {
 		slog.Error("chat returned error", "err", err)
 	}
 }
