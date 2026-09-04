@@ -21,7 +21,7 @@ func (chat *Chat) request(ctx context.Context, msg string) (*openai.ChatCompleti
 			ResponseFormat: openai.ChatCompletionNewParamsResponseFormatUnion{
 				OfJSONSchema: &shared.ResponseFormatJSONSchemaParam{
 					JSONSchema: shared.ResponseFormatJSONSchemaJSONSchemaParam{
-						Schema: responseSchema,
+						Schema: chat.responseSchema,
 						Strict: openai.Bool(true),
 					},
 				},

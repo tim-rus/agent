@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"log/slog"
 
 	"github.com/openai/openai-go/v3"
@@ -41,24 +42,36 @@ type Usage struct {
 //
 
 type Chat struct {
-	client  openai.Client
-	history []Message
-	model   string
-	Usage   Usage
+	client openai.Client
+
+	model          string
+	history        []Message
+	responseSchema map[string]any
+
+	Usage Usage
 }
 
-func New(client openai.Client, model string, systemPromt string) *Chat {
+func New(client openai.Client, model string, systemPromt string) (*Chat, error) {
+	schema, err := generateSchema[Response]()
+	if err != nil {
+		return nil, fmt.Errorf("failed to generate schema: %w", err)
+	}
+
 	return &Chat{
 		client: client,
+
+		model:          model,
+		responseSchema: schema,
+
 		history: []Message{
 			{
 				Role:    RoleSystem,
 				Message: systemPromt,
 			},
 		},
-		model: model,
+
 		Usage: Usage{},
-	}
+	}, nil
 }
 
 //
@@ -81,12 +94,18 @@ func (chat *Chat) Ask(ctx context.Context, q string) (*Response, error) {
 
 	content := res.Choices[0].Message.Content
 
-	msg := Message{
+	userMsg := Message{
+		Role:    RoleUser,
+		Message: q,
+	}
+
+	assistantMsg := Message{
 		Role:    RoleAssistant,
 		Message: content,
 	}
 
-	chat.history = append(chat.history, msg)
+	chat.history = append(chat.history, userMsg)
+	chat.history = append(chat.history, assistantMsg)
 
 	response := Response{}
 	if err := json.Unmarshal([]byte(content), &response); err != nil {
