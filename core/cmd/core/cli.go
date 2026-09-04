@@ -14,7 +14,7 @@ const (
 	cmdExit = ":q"
 )
 
-func chat() error {
+func cli_loop() error {
 	scanner := bufio.NewScanner(os.Stdin)
 	fmt.Println(msgWelcome)
 	fmt.Printf("[type '%s' to quit]\n", cmdExit)
