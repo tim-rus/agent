@@ -37,7 +37,7 @@ func cli_loop(ctx context.Context, chatSvc *chat.Chat) error {
 		input := scanner.Text()
 
 		if strings.TrimSpace(input) == cmdExit {
-			fmt.Printf("tokens spent: %d", chatSvc.Usage.Total)
+			fmt.Printf("tokens spent: %d\n", chatSvc.Usage.Total)
 			fmt.Println(msgGoodbye)
 			break
 		}
