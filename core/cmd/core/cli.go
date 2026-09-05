@@ -49,17 +49,17 @@ func cli_loop(ctx context.Context, chatSvc *chat.Chat) error {
 		res, err := chatSvc.Ask(ctx, input)
 		if err != nil {
 			printError(res, err)
-			break
+			continue
 		}
 
 		if res.Injection {
 			printInjection()
-			break
+			continue
 		}
 
 		if res.Compact != "" {
 			printCompacting(res)
-			break
+			continue
 		}
 
 		chatSvc.UpdateHistory(input, res.Text)
