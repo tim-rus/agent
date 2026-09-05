@@ -52,6 +52,16 @@ func cli_loop(ctx context.Context, chatSvc *chat.Chat) error {
 			break
 		}
 
+		if res.Injection {
+			break
+		}
+
+		if res.Compact != "" {
+			break
+		}
+
+		chatSvc.UpdateHistory(input, res.Text)
+
 		printResponse(res)
 
 	}

@@ -92,8 +92,6 @@ func (chat *Chat) Ask(ctx context.Context, q string) (*Response, error) {
 
 	content := res.Choices[0].Message.Content
 
-	chat.updateHistory(q, content)
-
 	response := Response{}
 	if err := json.Unmarshal([]byte(content), &response); err != nil {
 		slog.Error("unmarshalling error", "err", err)
@@ -109,7 +107,9 @@ func (chat *Chat) updateUsage(usage openai.CompletionUsage) {
 	chat.Usage.Responses += uint64(usage.CompletionTokens)
 }
 
-func (chat *Chat) updateHistory(q, response string) {
+//
+
+func (chat *Chat) UpdateHistory(q, response string) {
 	userMsg := Message{
 		Role:    RoleUser,
 		Message: q,
@@ -123,5 +123,3 @@ func (chat *Chat) updateHistory(q, response string) {
 	chat.history = append(chat.history, userMsg)
 	chat.history = append(chat.history, assistantMsg)
 }
-
-//
