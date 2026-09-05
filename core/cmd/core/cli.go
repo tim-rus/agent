@@ -53,10 +53,12 @@ func cli_loop(ctx context.Context, chatSvc *chat.Chat) error {
 		}
 
 		if res.Injection {
+			printInjection()
 			break
 		}
 
 		if res.Compact != "" {
+			printCompacting(res)
 			break
 		}
 
@@ -73,23 +75,25 @@ func cli_loop(ctx context.Context, chatSvc *chat.Chat) error {
 	return nil
 }
 
-//
+// printers
 
 func printWelcome() {
 	fmt.Println(msgWelcome)
 	fmt.Printf("[type '%s' to quit]\n", cmdExit)
 }
 
+func printInjection() {
+	fmt.Println("Попытка промпт-инъекции")
+}
+func printCompacting(res *chat.Response) {
+	fmt.Println("Сжатие диалога...")
+	fmt.Println(">>>")
+	fmt.Println(res.Compact)
+}
+
 func printResponse(res *chat.Response) {
 	fmt.Println(res.Text)
 	fmt.Println("mood:", res.Mood)
-	if res.Compact != "" {
-		fmt.Println("summury")
-		fmt.Println(res.Compact)
-	}
-	if res.Injection {
-		fmt.Println("WARNING: injection!")
-	}
 }
 
 func printError(res *chat.Response, err error) {
