@@ -52,7 +52,7 @@ func main() {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	chatSvc, err := chat.New(oai, "qwen/qwen3.7-flash", promptSystem)
+	chatSvc, err := chat.New(oai, "qwen/qwen3.7-flash", systemPromt())
 	if err != nil {
 		slog.Error("failed to create chat service", "err", err)
 		os.Exit(1)
