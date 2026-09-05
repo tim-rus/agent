@@ -13,7 +13,7 @@ import (
 
 func (chat *Chat) request(ctx context.Context, msg string) (*openai.ChatCompletion, error) {
 	union := msgsToUnions(chat.history)
-	u := append(union, messageToUnion(Message{Role: RoleUser, Message: fmt.Sprintf("<user_input>\n%s\n</user_input>", msg)}))
+	u := append(union, messageToUnion(formatUserMessage(msg)))
 
 	res, err := chat.client.Chat.Completions.New(
 		ctx,
@@ -29,6 +29,18 @@ func (chat *Chat) request(ctx context.Context, msg string) (*openai.ChatCompleti
 	}
 
 	return res, nil
+}
+
+func formatUserMessage(msg string) Message {
+	return Message{
+		Role: RoleUser,
+		Message: fmt.Sprintf(
+			`<user_input>
+				%s
+			</user_input>`,
+			msg,
+		),
+	}
 }
 
 func responseFormat(schema map[string]any) openai.ChatCompletionNewParamsResponseFormatUnion {
