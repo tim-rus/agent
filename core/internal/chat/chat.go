@@ -85,25 +85,14 @@ func (chat *Chat) Ask(ctx context.Context, q string) (*Response, error) {
 
 	chat.updateUsage(res.Usage)
 
-	if len(res.Choices) < 1 {
+	if len(res.Choices) == 0 {
 		slog.Warn("request returned empty result", "res", res)
 		return nil, ErrEmpty
 	}
 
 	content := res.Choices[0].Message.Content
 
-	userMsg := Message{
-		Role:    RoleUser,
-		Message: q,
-	}
-
-	assistantMsg := Message{
-		Role:    RoleAssistant,
-		Message: content,
-	}
-
-	chat.history = append(chat.history, userMsg)
-	chat.history = append(chat.history, assistantMsg)
+	chat.updateHistory(q, content)
 
 	response := Response{}
 	if err := json.Unmarshal([]byte(content), &response); err != nil {
@@ -118,6 +107,21 @@ func (chat *Chat) updateUsage(usage openai.CompletionUsage) {
 	chat.Usage.Total += uint64(usage.TotalTokens)
 	chat.Usage.Promts += uint64(usage.PromptTokens)
 	chat.Usage.Responses += uint64(usage.CompletionTokens)
+}
+
+func (chat *Chat) updateHistory(q, response string) {
+	userMsg := Message{
+		Role:    RoleUser,
+		Message: q,
+	}
+
+	assistantMsg := Message{
+		Role:    RoleAssistant,
+		Message: response,
+	}
+
+	chat.history = append(chat.history, userMsg)
+	chat.history = append(chat.history, assistantMsg)
 }
 
 //
