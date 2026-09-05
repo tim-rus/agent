@@ -83,9 +83,7 @@ func (chat *Chat) Ask(ctx context.Context, q string) (*Response, error) {
 		return nil, ErrRequest
 	}
 
-	chat.Usage.Total += uint64(res.Usage.TotalTokens)
-	chat.Usage.Promts += uint64(res.Usage.PromptTokens)
-	chat.Usage.Responses += uint64(res.Usage.CompletionTokens)
+	chat.updateUsage(res.Usage)
 
 	if len(res.Choices) < 1 {
 		slog.Warn("request returned empty result", "res", res)
@@ -114,6 +112,12 @@ func (chat *Chat) Ask(ctx context.Context, q string) (*Response, error) {
 	}
 
 	return &response, nil
+}
+
+func (chat *Chat) updateUsage(usage openai.CompletionUsage) {
+	chat.Usage.Total += uint64(usage.TotalTokens)
+	chat.Usage.Promts += uint64(usage.PromptTokens)
+	chat.Usage.Responses += uint64(usage.CompletionTokens)
 }
 
 //
