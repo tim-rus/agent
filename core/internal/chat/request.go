@@ -9,6 +9,8 @@ import (
 	"github.com/openai/openai-go/v3/shared"
 )
 
+//
+
 func (chat *Chat) request(ctx context.Context, msg string) (*openai.ChatCompletion, error) {
 	union := msgsToUnions(chat.history)
 	u := append(union, messageToUnion(Message{Role: RoleUser, Message: fmt.Sprintf("<user_input>\n%s\n</user_input>", msg)}))
@@ -16,16 +18,9 @@ func (chat *Chat) request(ctx context.Context, msg string) (*openai.ChatCompleti
 	res, err := chat.client.Chat.Completions.New(
 		ctx,
 		openai.ChatCompletionNewParams{
-			Model:    chat.model,
-			Messages: u,
-			ResponseFormat: openai.ChatCompletionNewParamsResponseFormatUnion{
-				OfJSONSchema: &shared.ResponseFormatJSONSchemaParam{
-					JSONSchema: shared.ResponseFormatJSONSchemaJSONSchemaParam{
-						Schema: chat.responseSchema,
-						Strict: openai.Bool(true),
-					},
-				},
-			},
+			Model:          chat.model,
+			Messages:       u,
+			ResponseFormat: responseFormat(chat.responseSchema),
 		},
 		option.WithJSONSet("enable_thinking", false),
 	)
@@ -34,6 +29,17 @@ func (chat *Chat) request(ctx context.Context, msg string) (*openai.ChatCompleti
 	}
 
 	return res, nil
+}
+
+func responseFormat(schema map[string]any) openai.ChatCompletionNewParamsResponseFormatUnion {
+	return openai.ChatCompletionNewParamsResponseFormatUnion{
+		OfJSONSchema: &shared.ResponseFormatJSONSchemaParam{
+			JSONSchema: shared.ResponseFormatJSONSchemaJSONSchemaParam{
+				Schema: schema,
+				Strict: openai.Bool(true),
+			},
+		},
+	}
 }
 
 // utils
