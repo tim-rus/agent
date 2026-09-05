@@ -11,7 +11,7 @@ import (
 
 func (chat *Chat) request(ctx context.Context, msg string) (*openai.ChatCompletion, error) {
 	union := msgsToUnions(chat.history)
-	u := append(union, messageToUnion(Message{Role: RoleUser, Message: msg}))
+	u := append(union, messageToUnion(Message{Role: RoleUser, Message: fmt.Sprintf("<user_input>\n%s\n</user_input>", msg)}))
 
 	res, err := chat.client.Chat.Completions.New(
 		ctx,

@@ -6,6 +6,7 @@ import (
 	"core/internal/chat"
 	"errors"
 	"fmt"
+	"log/slog"
 	"os"
 	"strings"
 )
@@ -55,11 +56,16 @@ func cli_loop(ctx context.Context, chatSvc *chat.Chat) error {
 			break
 		}
 
+		slog.Info("RES", "res", res)
+
 		fmt.Println(res.Text)
 		fmt.Println("mood:", res.Mood)
 		if res.Compact != "" {
 			fmt.Println("summury")
 			fmt.Println(res.Compact)
+		}
+		if res.Injection {
+			fmt.Println("WARNING: injection!")
 		}
 	}
 

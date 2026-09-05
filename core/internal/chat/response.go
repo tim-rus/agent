@@ -20,9 +20,10 @@ const (
 //
 
 type Response struct {
-	Text    string `json:"text"`
-	Mood    string `json:"mood"`
-	Compact string `json:"compact,omitempty"`
+	Text      string `json:"text"`
+	Mood      string `json:"mood"`
+	Compact   string `json:"compact,omitempty"`
+	Injection bool   `json:"injection"`
 }
 
 //
