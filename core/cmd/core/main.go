@@ -27,19 +27,29 @@ var (
 //
 
 func main() {
+
 	if err := godotenv.Load("../config/.core.local.env"); err != nil {
 		slog.Error("failed to load env file", "err", err)
 		os.Exit(1)
 	}
 
+	slog.Info("running app")
+
+	if err := run(); err != nil {
+		slog.Error("app failed", "err", err)
+		os.Exit(1)
+	}
+
+	slog.Info("app exited")
+}
+
+func run() error {
 	oai := openai.NewClient(
 		option.WithAPIKey(os.Getenv("OPENAI_KEY")),
 		option.WithBaseURL(os.Getenv("OPENAI_BASE_URL")),
 	)
 
-	if err := cliLoop(useRequest(oai)); err != nil {
-		slog.Error("cli loop failed", "err", err)
-	}
+	return cliLoop(useRequest(oai))
 }
 
 //
