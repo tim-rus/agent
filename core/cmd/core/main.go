@@ -75,7 +75,7 @@ func run(cfg Config) error {
 	)
 
 	llm := llm.New(oai, cfg.Models.Default)
-	dialog := dialog.New(llm)
+	dialog := dialog.New(llm, "будь максимально кратким")
 
 	_ = dialog
 
