@@ -29,7 +29,12 @@ func New(l *llm.LLM, systemPrompt string) *Dialog {
 
 //
 
-func (d *Dialog) Ask(ctx context.Context, q string) (string, error) {
+type Answer struct {
+	Content string
+	Usage   llm.Usage
+}
+
+func (d *Dialog) Ask(ctx context.Context, q string) (Answer, error) {
 	msg := llm.Message{Role: llm.RoleUser, Content: q}
 
 	// copy history in case of request error
@@ -39,13 +44,13 @@ func (d *Dialog) Ask(ctx context.Context, q string) (string, error) {
 
 	res, err := d.llm.Request(ctx, msgs, false)
 	if err != nil {
-		return "", fmt.Errorf("failed to request llm: %w", err)
+		return Answer{}, fmt.Errorf("failed to request llm: %w", err)
 	}
 
 	d.addUsage(res.Usage)
 	d.history = append(d.history, msg, llm.Message{Role: llm.RoleAssistant, Content: res.Content})
 
-	return res.Content, nil
+	return Answer{Content: res.Content, Usage: res.Usage}, nil
 }
 
 //

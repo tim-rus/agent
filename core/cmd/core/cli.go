@@ -30,7 +30,7 @@ func cliLoop(d *dialog.Dialog) error {
 		}
 
 		println()
-		println(res)
+		println(res.Content)
 		println()
 		println()
 
