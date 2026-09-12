@@ -1,6 +1,7 @@
 package main
 
 import (
+	"core/internal/llm"
 	"core/internal/platform/arguments"
 	"fmt"
 	"log/slog"
@@ -71,6 +72,9 @@ func run(cfg Config) error {
 		option.WithAPIKey(os.Getenv("OPENAI_KEY")),
 		option.WithBaseURL(os.Getenv("OPENAI_BASE_URL")),
 	)
+
+	llm := llm.New()
+	_ = llm
 
 	return cliLoop(useRequest(oai, cfg.Models.Default))
 }
