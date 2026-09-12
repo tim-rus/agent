@@ -2,9 +2,11 @@ package main
 
 import (
 	"core/internal/arguments"
+	"fmt"
 	"log/slog"
 	"os"
 
+	"github.com/caarlos0/env/v11"
 	"github.com/joho/godotenv"
 	"github.com/openai/openai-go/v3"
 	"github.com/openai/openai-go/v3/option"
@@ -22,14 +24,20 @@ type Args struct {
 	EnvPath string
 }
 
+type Env struct {
+	OpenAIKey     string `env:"OPENAI_KEY"`
+	OpenAIBaseURL string `env:"OPENAI_BASE_URL"`
+}
+
 //
 
 func main() {
 
 	args := loadArgs()
 
-	if err := godotenv.Load(args.EnvPath); err != nil {
-		slog.Error("failed to load env file", "err", err)
+	env := Env{}
+	if err := loadEnv(&env, args.EnvPath); err != nil {
+		slog.Error("load env", "err", err)
 		os.Exit(1)
 	}
 
@@ -71,4 +79,14 @@ func loadArgs() Args {
 	}
 
 	return args
+}
+
+func loadEnv(e *Env, envFilePath ...string) error {
+	if err := godotenv.Load(envFilePath...); err != nil {
+		return fmt.Errorf("failed to load env files: %w", err)
+	}
+	if err := env.Parse(e); err != nil {
+		return fmt.Errorf("failed to parse env vars: %w", err)
+	}
+	return nil
 }
