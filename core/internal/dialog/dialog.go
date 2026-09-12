@@ -42,7 +42,17 @@ func (d *Dialog) Ask(ctx context.Context, q string) (string, error) {
 		return "", fmt.Errorf("failed to request llm: %w", err)
 	}
 
+	d.addUsage(res.Usage)
 	d.history = append(d.history, msg, llm.Message{Role: llm.RoleAssistant, Content: res.Content})
 
 	return res.Content, nil
+}
+
+//
+
+func (d *Dialog) addUsage(u llm.Usage) {
+	d.usage.Prompt += u.Prompt
+	d.usage.Completion += u.Completion
+	d.usage.Total += u.Total
+	d.usage.Cached += u.Cached
 }
