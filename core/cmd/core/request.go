@@ -22,12 +22,12 @@ type RequestFunc func(ctx context.Context, q string) (string, error)
 
 //
 
-func useRequest(client openai.Client) RequestFunc {
+func useRequest(client openai.Client, model string) RequestFunc {
 	return func(ctx context.Context, q string) (string, error) {
 		res, err := client.Chat.Completions.New(
 			ctx,
 			openai.ChatCompletionNewParams{
-				Model: defaultModel,
+				Model: model,
 				Messages: []openai.ChatCompletionMessageParamUnion{
 					openai.SystemMessage("будь максимально кратким"),
 					openai.UserMessage(q),

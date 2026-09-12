@@ -15,12 +15,6 @@ import (
 
 //
 
-const (
-	defaultModel = "qwen/qwen3.7-flash"
-)
-
-//
-
 type Args struct {
 	EnvPath string
 	CfgPath string
@@ -31,7 +25,11 @@ type Env struct {
 	OpenAIBaseURL string `env:"OPENAI_BASE_URL"`
 }
 
-type Config struct{}
+type Config struct {
+	Models struct {
+		Default string `yaml:"default"`
+	} `yaml:"models"`
+}
 
 //
 
@@ -58,7 +56,7 @@ func main() {
 
 	slog.Info("running app")
 
-	if err := run(); err != nil {
+	if err := run(cfg); err != nil {
 		slog.Error("app failed", "err", err)
 		os.Exit(1)
 	}
@@ -68,13 +66,13 @@ func main() {
 
 //
 
-func run() error {
+func run(cfg Config) error {
 	oai := openai.NewClient(
 		option.WithAPIKey(os.Getenv("OPENAI_KEY")),
 		option.WithBaseURL(os.Getenv("OPENAI_BASE_URL")),
 	)
 
-	return cliLoop(useRequest(oai))
+	return cliLoop(useRequest(oai, cfg.Models.Default))
 }
 
 //
