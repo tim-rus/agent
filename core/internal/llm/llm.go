@@ -33,7 +33,7 @@ func New(client openai.Client, model string) *LLM {
 
 //
 
-func (llm *LLM) Request(ctx context.Context, msgs []Message, thinking bool) (openai.ChatCompletionChoice, error) {
+func (llm *LLM) Request(ctx context.Context, msgs []Message, thinking bool) (Message, error) {
 	p := llm.params
 	p.Messages = messagesToUnion(msgs)
 
@@ -43,14 +43,14 @@ func (llm *LLM) Request(ctx context.Context, msgs []Message, thinking bool) (ope
 		option.WithJSONSet("enable_thinking", thinking),
 	)
 	if err != nil {
-		return openai.ChatCompletionChoice{}, fmt.Errorf("failed to make openai request: %w", err)
+		return Message{}, fmt.Errorf("failed to make openai request: %w", err)
 	}
 
 	if len(res.Choices) == 0 {
-		return openai.ChatCompletionChoice{}, ErrEmptyResult
+		return Message{}, ErrEmptyResult
 	}
 
-	return res.Choices[0], nil
+	return Message{Role: RoleAssistant, Content: res.Choices[0].Message.Content}, nil
 }
 
 //
