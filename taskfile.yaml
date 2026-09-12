@@ -5,3 +5,12 @@ tasks:
   run:core:
     dir: core
     cmd: go run ./cmd/core -- -e ../config/.core.local.env -c ../config/core.local.config.yaml -p ../prompts
+
+  run:tg:
+    dir: tg
+    cmds:
+      - source .venv/Scripts/activate
+      - ENV_FILE="../config/.tg.local.env" CONFIG_FILE="../config/tg.local.config.yaml" python main.py
+
+  buf:
+    cmd: buf generate

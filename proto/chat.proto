@@ -1,0 +1,22 @@
+syntax = "proto3";
+
+//
+
+package chat;
+option go_package = "core/internal/pg/chat";
+
+// SERVICE
+
+service ChatService {
+	rpc Ask(AskRequest) returns (AskResponse) {}
+}
+
+// 
+
+message AskRequest {
+	string prompt = 1;
+}
+
+message AskResponse {
+	string completion = 1;
+}
