@@ -3,12 +3,13 @@ package main
 import (
 	"bufio"
 	"context"
+	"core/internal/dialog"
 	"fmt"
 	"log/slog"
 	"os"
 )
 
-func cliLoop(request RequestFunc) error {
+func cliLoop(d *dialog.Dialog) error {
 	scanner := bufio.NewScanner(os.Stdin)
 
 	for {
@@ -21,7 +22,7 @@ func cliLoop(request RequestFunc) error {
 
 		input := scanner.Text()
 
-		res, err := request(context.Background(), input)
+		res, err := d.Ask(context.Background(), input)
 		if err != nil {
 			slog.Error("request error", "err", err)
 			println("Request error")
