@@ -2,11 +2,13 @@ package main
 
 import (
 	"bufio"
+	"context"
 	"fmt"
+	"log/slog"
 	"os"
 )
 
-func cliLoop() error {
+func cliLoop(request RequestFunc) error {
 	scanner := bufio.NewScanner(os.Stdin)
 
 	for {
@@ -19,7 +21,17 @@ func cliLoop() error {
 
 		input := scanner.Text()
 
-		println("ECHO:", input)
+		res, err := request(context.Background(), input)
+		if err != nil {
+			slog.Error("request error", "err", err)
+			println("Request error")
+			continue
+		}
+
+		println()
+		println(res)
+		println()
+		println()
 
 	}
 
