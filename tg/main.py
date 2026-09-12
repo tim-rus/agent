@@ -1,6 +1,9 @@
+import asyncio
 from os import getenv
 from pathlib import Path
 from dotenv import load_dotenv
+
+from tgmanager import TG
 
 # env
 
@@ -10,7 +13,7 @@ dotenv_file_path = Path(dotenv_file_env).resolve()
 if not load_dotenv(dotenv_path=dotenv_file_path):
 	raise RuntimeError(f"Failed to load env file at: {dotenv_file_path}")
 
-# 
+# params
 
 tgToken = getenv("TG_TOKEN")
 if not tgToken:
@@ -20,8 +23,17 @@ proxyString = getenv("PROXY_STRING")
 if not proxyString:
 	raise RuntimeError(f"PROXY_STRING required")
 
-# bot
+# services
 
 bot = TG(token=tgToken, proxy_url=proxyString)
 
-print(f"test: {getenv("TEST")}")
+# main
+
+async def main():
+	print("Starting bot")
+	await bot.connect()
+
+# run
+
+if __name__ == "__main__":
+	asyncio.run(main())
