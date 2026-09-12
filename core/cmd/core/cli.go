@@ -22,7 +22,7 @@ func cliLoop(d *dialog.Dialog) error {
 
 		input := scanner.Text()
 
-		res, err := d.Ask(context.Background(), input)
+		res, err := d.Prompt(context.Background(), input)
 		if err != nil {
 			slog.Error("request error", "err", err)
 			println("Request error")

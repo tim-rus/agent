@@ -34,7 +34,7 @@ type Answer struct {
 	Usage   llm.Usage
 }
 
-func (d *Dialog) Ask(ctx context.Context, q string) (Answer, error) {
+func (d *Dialog) Prompt(ctx context.Context, q string) (Answer, error) {
 	msg := llm.Message{Role: llm.RoleUser, Content: q}
 
 	// copy history in case of request error
