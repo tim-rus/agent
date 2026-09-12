@@ -6,6 +6,7 @@ require (
 	github.com/caarlos0/env/v11 v11.4.1
 	github.com/joho/godotenv v1.5.1
 	github.com/openai/openai-go/v3 v3.61.0
+	go.yaml.in/yaml/v2 v2.4.4
 )
 
 require (
