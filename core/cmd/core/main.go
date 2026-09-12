@@ -1,6 +1,7 @@
 package main
 
 import (
+	"core/internal/dialog"
 	"core/internal/llm"
 	"core/internal/platform/arguments"
 	"fmt"
@@ -74,7 +75,9 @@ func run(cfg Config) error {
 	)
 
 	llm := llm.New()
-	_ = llm
+	dialog := dialog.New(llm)
+
+	_ = dialog
 
 	return cliLoop(useRequest(oai, cfg.Models.Default))
 }
