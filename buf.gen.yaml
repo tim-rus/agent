@@ -1,0 +1,17 @@
+version: v2
+plugins:
+  # core
+  - local: protoc-gen-go
+    out: ./core/internal/pg
+    opt: 
+      - module=core/internal/pg
+  - local: protoc-gen-connect-go
+    out: ./core/internal/pg
+    opt: 
+      - module=core/internal/pg
+
+  # tg
+  - local: protoc-gen-python_betterproto
+    out: ./tg/pg
+  - local: protoc-gen-connectrpc
+    out: ./tg/pg

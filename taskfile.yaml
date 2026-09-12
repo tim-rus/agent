@@ -11,3 +11,6 @@ tasks:
     cmds:
       - source .venv/Scripts/activate
       - ENV_FILE="../config/.tg.local.env" python main.py
+
+  buf:
+    cmd: buf generate
