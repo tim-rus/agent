@@ -74,7 +74,7 @@ func run(cfg Config) error {
 		option.WithBaseURL(os.Getenv("OPENAI_BASE_URL")),
 	)
 
-	llm := llm.New()
+	llm := llm.New(oai)
 	dialog := dialog.New(llm)
 
 	_ = dialog
