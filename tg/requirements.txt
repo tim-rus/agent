@@ -4,3 +4,4 @@ aiohttp_socks==0.12.0
 connectrpc==0.11.1
 betterproto==1.2.5
 PyYAML==6.0.3
+md2tgmd==0.3.10

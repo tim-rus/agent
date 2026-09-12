@@ -4,7 +4,7 @@ from pathlib import Path
 from dotenv import load_dotenv
 import yaml
 
-from pg.ping import PINGServiceStub
+from pg.chat import ChatServiceStub
 from grpclib.client import Channel
 
 from tgmanager import TG
@@ -41,10 +41,10 @@ if not proxyString:
 
 async def main():
 	channel = Channel(host=config['rpc']['host'], port=config['rpc']['port'])
-	stub = PINGServiceStub(channel)
+	chatRPC = ChatServiceStub(channel)
 
 	bot = TG(token=tgToken, proxy_url=proxyString)
-	routing.setupRoutes(bot.dp, stub)
+	routing.setupRoutes(bot.dp, chatRPC)
 
 	print("Starting bot")
 	await bot.connect()

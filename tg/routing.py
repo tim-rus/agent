@@ -1,15 +1,23 @@
+import re
 from aiogram import Dispatcher
 from aiogram.types import Message
-from pg.ping import PINGServiceStub
+from aiogram.enums import ParseMode
 
-def setupRoutes(dp: Dispatcher, rpc: PINGServiceStub):
+from md2tgmd import escape
+
+from pg.chat import ChatServiceStub
+
+def setupRoutes(dp: Dispatcher, rpc: ChatServiceStub):
 
 	@dp.message()
 	async def msg_handler(message: Message) -> None:
 		try:
-			await message.send_copy(chat_id=message.chat.id)
-			res = await rpc.ping(msg=message.text)
-			print(f"msg: {res.msg}")
+			print(f"prompt: {message.text}")
+			res = await rpc.ask(prompt=message.text)
+			print(f"response: {res.completion}")
+			safe_text = escape(res.completion)
+			await message.answer(text=safe_text, parse_mode=ParseMode.MARKDOWN_V2)
 
-		except TypeError:
-			await message.answer("Unsupported message")
+		except Exception as err:
+			print(f"error: {err}")
+			await message.answer("failed to reply")
