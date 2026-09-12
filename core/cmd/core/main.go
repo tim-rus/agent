@@ -49,7 +49,7 @@ func main() {
 		slog.Error("read config file", "err", err)
 		os.Exit(1)
 	}
-	if err := yaml.Unmarshal(f, cfg); err != nil {
+	if err := yaml.Unmarshal(f, &cfg); err != nil {
 		slog.Error("parse config file", "err", err)
 		os.Exit(1)
 	}
