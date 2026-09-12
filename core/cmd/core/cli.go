@@ -32,6 +32,12 @@ func cliLoop(d *dialog.Dialog) error {
 		println()
 		println(res.Content)
 		println()
+		println("[USAGE]")
+		println("total:", res.Usage.Total)
+		println("prompt:", res.Usage.Prompt)
+		println("completion:", res.Usage.Completion)
+		println("cached:", res.Usage.Cached)
+		println()
 		println()
 
 	}
