@@ -4,6 +4,7 @@ from pathlib import Path
 from dotenv import load_dotenv
 
 from tgmanager import TG
+import routing
 
 # env
 
@@ -26,6 +27,7 @@ if not proxyString:
 # services
 
 bot = TG(token=tgToken, proxy_url=proxyString)
+routing.setupRoutes(bot.dp)
 
 # main
 
