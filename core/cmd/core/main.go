@@ -4,7 +4,7 @@ import (
 	"context"
 	"core/internal/dialog"
 	"core/internal/llm"
-	"core/internal/pg/ping/pingconnect"
+	"core/internal/pg/chat/chatconnect"
 	"core/internal/platform/arguments"
 	"fmt"
 	"log/slog"
@@ -101,13 +101,11 @@ func run(ctx context.Context, args Args, cfg Config) error {
 	llm := llm.New(oai, cfg.Models.Default)
 	dialog := dialog.New(llm, prompts["system"])
 
-	pingSvc := &PingSvc{}
-
 	// rpc server
 
 	mux := http.NewServeMux()
 
-	mux.Handle(pingconnect.NewPINGServiceHandler(pingSvc))
+	mux.Handle(chatconnect.NewChatServiceHandler(dialog))
 
 	protocols := &http.Protocols{}
 	protocols.SetUnencryptedHTTP2(true)
