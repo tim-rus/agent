@@ -1,0 +1,7 @@
+version: 3
+
+tasks:
+
+  run:core:
+    dir: core
+    cmd: go run ./cmd/core
