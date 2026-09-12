@@ -1,7 +1,7 @@
 package main
 
 import (
-	"core/internal/arguments"
+	"core/internal/platform/arguments"
 	"fmt"
 	"log/slog"
 	"os"
