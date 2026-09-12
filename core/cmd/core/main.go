@@ -1,14 +1,21 @@
 package main
 
 import (
+	"context"
 	"core/internal/dialog"
 	"core/internal/llm"
+	"core/internal/pg/ping/pingconnect"
 	"core/internal/platform/arguments"
 	"fmt"
 	"log/slog"
+	"net"
+	"net/http"
 	"os"
+	"os/signal"
 	"path/filepath"
 	"strings"
+	"syscall"
+	"time"
 
 	"github.com/caarlos0/env/v11"
 	"github.com/joho/godotenv"
@@ -34,6 +41,10 @@ type Config struct {
 	Models struct {
 		Default string `yaml:"default"`
 	} `yaml:"models"`
+	RPC struct {
+		Host string
+		Port int
+	} `yaml:"rpc"`
 }
 
 //
@@ -59,9 +70,12 @@ func main() {
 		os.Exit(1)
 	}
 
+	sysCtx, sysCancel := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
+	defer sysCancel()
+
 	slog.Info("running app")
 
-	if err := run(args, cfg); err != nil {
+	if err := run(sysCtx, args, cfg); err != nil {
 		slog.Error("app failed", "err", err)
 		os.Exit(1)
 	}
@@ -71,7 +85,7 @@ func main() {
 
 //
 
-func run(args Args, cfg Config) error {
+func run(ctx context.Context, args Args, cfg Config) error {
 	oai := openai.NewClient(
 		option.WithAPIKey(os.Getenv("OPENAI_KEY")),
 		option.WithBaseURL(os.Getenv("OPENAI_BASE_URL")),
@@ -85,7 +99,74 @@ func run(args Args, cfg Config) error {
 	llm := llm.New(oai, cfg.Models.Default)
 	dialog := dialog.New(llm, prompts["system"])
 
-	return cliLoop(dialog)
+	pingSvc := &PingSvc{}
+
+	// rpc server
+
+	mux := http.NewServeMux()
+
+	mux.Handle(pingconnect.NewPINGServiceHandler(pingSvc))
+
+	protocols := &http.Protocols{}
+	protocols.SetUnencryptedHTTP2(true)
+	protocols.SetHTTP1(true)
+
+	addr := net.JoinHostPort(cfg.RPC.Host, fmt.Sprint(cfg.RPC.Port))
+
+	rpcServer := &http.Server{
+		Addr:      addr,
+		Handler:   mux,
+		Protocols: protocols,
+	} // TODO: config (timeouts)
+
+	// run rpc server
+
+	rpcErrCh := make(chan error, 1)
+
+	go func() {
+		slog.Info("rpc server started", "at", rpcServer.Addr)
+		if err := rpcServer.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+			rpcErrCh <- err
+		}
+	}()
+
+	// run cli
+
+	cliErrCh := make(chan error, 1)
+
+	go func() {
+		slog.Info("cli started")
+		if err := cliLoop(dialog); err != nil {
+			cliErrCh <- err
+		}
+	}()
+
+	// shutdown
+
+	var unexpectedErr error
+
+	select {
+	case unexpectedErr = <-rpcErrCh:
+		slog.Error("rpc server failed", "err", unexpectedErr)
+	case unexpectedErr = <-cliErrCh:
+		slog.Error("cli failed", "err", unexpectedErr)
+	case <-ctx.Done():
+		slog.Info("interrupt signal received")
+	}
+
+	slog.Info("shutting down")
+
+	shutdownCtx, shutdownCancel := context.WithTimeout(
+		context.Background(),
+		time.Duration(10)*time.Second, // TODO: configure
+	)
+	defer shutdownCancel()
+
+	if err := rpcServer.Shutdown(shutdownCtx); err != nil {
+		slog.Error("rpc server graceful shutdown", "err", err)
+	}
+
+	return unexpectedErr
 }
 
 //
