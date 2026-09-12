@@ -4,4 +4,4 @@ tasks:
 
   run:core:
     dir: core
-    cmd: go run ./cmd/core -- -e ../config/.core.local.env -c ../config/core.local.config.yaml
+    cmd: go run ./cmd/core -- -e ../config/.core.local.env -c ../config/core.local.config.yaml -p ../prompts
