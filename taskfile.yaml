@@ -10,4 +10,4 @@ tasks:
     dir: tg
     cmds:
       - source .venv/Scripts/activate
-      - python main.py
+      - ENV_FILE="../config/.tg.local.env" python main.py
