@@ -4,4 +4,4 @@ tasks:
 
   run:core:
     dir: core
-    cmd: go run ./cmd/core
+    cmd: go run ./cmd/core -- -e ../config/.core.local.env

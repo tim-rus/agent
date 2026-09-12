@@ -1,9 +1,7 @@
 package main
 
 import (
-	"context"
-	"errors"
-	"fmt"
+	"core/internal/arguments"
 	"log/slog"
 	"os"
 
@@ -20,15 +18,17 @@ const (
 
 //
 
-var (
-	ErrEmptyResult = errors.New("empty result")
-)
+type Args struct {
+	EnvPath string
+}
 
 //
 
 func main() {
 
-	if err := godotenv.Load("../config/.core.local.env"); err != nil {
+	args := loadArgs()
+
+	if err := godotenv.Load(args.EnvPath); err != nil {
 		slog.Error("failed to load env file", "err", err)
 		os.Exit(1)
 	}
@@ -43,6 +43,8 @@ func main() {
 	slog.Info("app exited")
 }
 
+//
+
 func run() error {
 	oai := openai.NewClient(
 		option.WithAPIKey(os.Getenv("OPENAI_KEY")),
@@ -54,30 +56,19 @@ func run() error {
 
 //
 
-type RequestFunc func(ctx context.Context, q string) (string, error)
+func loadArgs() Args {
+	argsRaw := arguments.Read()
 
-func useRequest(client openai.Client) RequestFunc {
-	return func(ctx context.Context, q string) (string, error) {
-		res, err := client.Chat.Completions.New(
-			ctx,
-			openai.ChatCompletionNewParams{
-				Model: defaultModel,
-				Messages: []openai.ChatCompletionMessageParamUnion{
-					openai.SystemMessage("будь максимально кратким"),
-					openai.UserMessage(q),
-				},
-			},
-			option.WithJSONSet("enable_thinking", false),
-		)
-		if err != nil {
-			slog.Error("REQ ERR", "err", err)
-			return "", fmt.Errorf("failed to make openai request: %w", err)
-		}
+	args := Args{}
 
-		if len(res.Choices) == 0 {
-			return "", ErrEmptyResult
-		}
-
-		return res.Choices[0].Message.Content, nil
+	// env path
+	if envPath, ok := argsRaw["env"]; ok {
+		args.EnvPath = envPath
+	} else if envPath, ok := argsRaw["e"]; ok {
+		args.EnvPath = envPath
+	} else {
+		args.EnvPath = "./.env" // default
 	}
+
+	return args
 }
