@@ -12,4 +12,16 @@ if not load_dotenv(dotenv_path=dotenv_file_path):
 
 # 
 
+tgToken = getenv("TG_TOKEN")
+if not tgToken:
+	raise RuntimeError(f"TG_TOKEN required")
+
+proxyString = getenv("PROXY_STRING")
+if not proxyString:
+	raise RuntimeError(f"PROXY_STRING required")
+
+# bot
+
+bot = TG(token=tgToken, proxy_url=proxyString)
+
 print(f"test: {getenv("TEST")}")
