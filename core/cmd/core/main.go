@@ -113,9 +113,11 @@ func run(ctx context.Context, args Args, cfg Config) error {
 
 	addr := net.JoinHostPort(cfg.RPC.Host, fmt.Sprint(cfg.RPC.Port))
 
+	handlerWithCors := corsAllowAll(mux)
+
 	rpcServer := &http.Server{
 		Addr:      addr,
-		Handler:   mux,
+		Handler:   handlerWithCors,
 		Protocols: protocols,
 	} // TODO: config (timeouts)
 

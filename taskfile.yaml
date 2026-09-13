@@ -12,5 +12,9 @@ tasks:
       - source .venv/Scripts/activate
       - ENV_FILE="../config/.tg.local.env" CONFIG_FILE="../config/tg.local.config.yaml" python main.py
 
+  run:ui:
+    dir: ui
+    cmd: CONFIG_PATH="../config" ENV_FILE=".ui.local.env" npm run dev
+
   buf:
     cmd: buf generate

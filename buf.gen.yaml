@@ -15,3 +15,9 @@ plugins:
     out: ./tg/pg
   - local: protoc-gen-connectrpc
     out: ./tg/pg
+
+  # ui
+  - local: protoc-gen-es
+    out: ./ui/src/pg
+  - local: protoc-gen-connect-es
+    out: ./ui/src/pg
