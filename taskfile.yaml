@@ -14,7 +14,7 @@ tasks:
 
   run:ui:
     dir: ui
-    cmd: npm run dev
+    cmd: CONFIG_PATH="../config" ENV_FILE=".ui.local.env" npm run dev
 
   buf:
     cmd: buf generate
