@@ -29,7 +29,7 @@ print(f"config: {config}")
 # main
 
 async def main():
-    channel = Channel(host="127.0.0.1", port=9000)
+    channel = Channel(host=config['core']['host'], port=config['core']['port'])
     stub = PingServiceStub(channel)
 
     response: PingResponse = await stub.ping(msg="hello from tg")
