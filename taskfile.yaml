@@ -13,6 +13,9 @@ tasks:
   compose:tg:
     cmd: docker compose --env-file ./config/.env.docker up -d --build tg
 
+  compose:ui:
+    cmd: docker compose --env-file ./config/.env.docker up -d --build ui
+
   # loggers
 
   logs:
@@ -23,6 +26,9 @@ tasks:
 
   logs:tg:
     cmd: docker compose --env-file ./config/.env.docker logs -t -f --tail=100 tg
+
+  logs:ui:
+    cmd: docker compose --env-file ./config/.env.docker logs -t -f --tail=100 ui
 
   # runners
 
