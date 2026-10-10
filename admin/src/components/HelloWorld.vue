@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { ping } from '../ping/ping'
+import { Button } from './ui/button'
 
 const data = ref("waiting")
 
@@ -18,9 +19,7 @@ const click = async () => {
     <div>
       <h1>Test Connect RPC</h1>
     </div>
-    <button type="button" class="counter" @click="click">
-      Load
-    </button>
+    <Button @click="click">Load</Button>
     <div>{{data}}</div>
   </section>
 </template>
