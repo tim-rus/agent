@@ -5,6 +5,7 @@ import viteLogo from './assets/vite.svg'
 import './App.css'
 import { errAsync } from './lib/errors'
 import { ping } from './ping/ping'
+import { Button } from './components/ui/button'
 
 function App() {
   const [count, setCount] = useState(0)
@@ -29,13 +30,9 @@ function App() {
         <div>
           <h1>Test Connect RPC</h1>
         </div>
-        <button
-          type="button"
-          className="counter"
-          onClick={click}
-        >
+        <Button onClick={click}>
           Load
-        </button>
+        </Button>
         <div>
           {data}
         </div>
