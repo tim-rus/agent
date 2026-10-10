@@ -12,7 +12,7 @@ services:
       dockerfile: docker/core.Dockerfile
     container_name: core
     ports:
-      - 90:9000
+      - 8090:9000
     volumes:
       - ${CONFIG_PATH}:${APP_CONFIG_PATH}:ro
     environment:
