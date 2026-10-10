@@ -1,0 +1,27 @@
+version: v2
+plugins:
+  # core
+  - local: protoc-gen-go
+    out: ./core/internal/gen
+    opt: paths=source_relative
+  - local: protoc-gen-connect-go
+    out: ./core/internal/gen
+    opt: paths=source_relative
+
+  # tg
+  - local: protoc-gen-python_betterproto
+    out: ./tg/gen
+  - local: protoc-gen-connectrpc
+    out: ./tg/gen
+
+  # ui
+  - local: protoc-gen-es
+    out: ./ui/src/gen
+  - local: protoc-gen-connect-es
+    out: ./ui/src/gen
+
+  # admin
+  - local: protoc-gen-es
+    out: ./admin/src/gen
+  - local: protoc-gen-connect-es
+    out: ./admin/src/gen
