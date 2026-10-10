@@ -3,7 +3,7 @@ version: 3
 tasks:
 
   run:
-    deps: [run:core, run:tg]
+    deps: [run:core, run:tg, run:ui]
 
   run:core:
     dir: "./core"
@@ -12,3 +12,7 @@ tasks:
   run:tg:
     dir: "./tg"
     cmd: python main.py
+
+  run:ui:
+    dir: "./ui"
+    cmd: npm run dev
