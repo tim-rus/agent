@@ -2,6 +2,24 @@ version: 3
 
 tasks:
 
+  # composers
+
+  compose:
+    cmd: docker compose --env-file ./config/.env.docker up -d --build
+
+  compose:core:
+    cmd: docker compose --env-file ./config/.env.docker up -d --build core
+
+  # loggers
+
+  logs:
+    cmd: docker compose --env-file ./config/.env.docker logs -t -f --tail=100
+
+  logs:core:
+    cmd: docker compose --env-file ./config/.env.docker logs -t -f --tail=100 core
+
+  # runners
+
   run:
     deps: [run:core, run:tg, run:ui]
 
