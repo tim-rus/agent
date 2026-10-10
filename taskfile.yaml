@@ -7,7 +7,7 @@ tasks:
 
   run:core:
     dir: "./core"
-    cmd: go run ./cmd/core -- -c ../config/core.dev.config.yaml -e ../config/.env.core
+    cmd: CONFIG_FILE="../config/core.dev.config.yaml" ENV_FILE="../config/.env.core" go run ./cmd/core
 
   run:tg:
     dir: "./tg"

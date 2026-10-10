@@ -30,7 +30,7 @@ func main() {
 	slog.SetDefault(slog.New(slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{Level: args.LogLevel})))
 
 	cfg := Config{}
-	if err := config.Read(&cfg, args.ConfigPath, args.EnvPath); err != nil {
+	if err := config.Read(&cfg, os.Getenv("CONFIG_FILE"), os.Getenv("ENV_FILE")); err != nil {
 		slog.Error("failed to read configuration", "error", err)
 		os.Exit(1)
 	}
