@@ -3,7 +3,11 @@ version: 3
 tasks:
 
   run:
-    deps: [run:tg]
+    deps: [run:core, run:tg]
+
+  run:core:
+    dir: "./core"
+    cmd: go run ./cmd/core
 
   run:tg:
     dir: "./tg"
