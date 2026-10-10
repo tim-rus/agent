@@ -9,6 +9,9 @@ export default defineConfig({
     babel({ presets: [reactCompilerPreset()] })
   ],
 
+  envDir: process.env.CONFIG_PATH || ".",
+  mode: process.env.MODE,
+
   server: {
     port: 3000
   }

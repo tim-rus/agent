@@ -5,8 +5,11 @@ go 1.27.1
 require (
 	connectrpc.com/connect v1.21.0
 	connectrpc.com/validate v0.9.0
+	github.com/caarlos0/env/v11 v11.4.1
+	github.com/joho/godotenv v1.5.1
 	github.com/labstack/echo/v5 v5.4.0
 	google.golang.org/protobuf v1.36.12
+	gopkg.in/yaml.v3 v3.0.1
 )
 
 require (

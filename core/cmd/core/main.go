@@ -2,6 +2,9 @@ package main
 
 import (
 	"core/internal/gen/pingconnect"
+	"core/internal/platform/arguments"
+	"core/internal/platform/config"
+	"fmt"
 	"log/slog"
 	"net"
 	"net/http"
@@ -12,7 +15,25 @@ import (
 	"github.com/labstack/echo/v5"
 )
 
+//
+
+type Config struct {
+	Host string `yaml:"host"`
+	Port int    `yaml:"port"`
+}
+
+//
+
 func main() {
+	args := arguments.Parse()
+
+	slog.SetDefault(slog.New(slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{Level: args.LogLevel})))
+
+	cfg := Config{}
+	if err := config.Read(&cfg, args.ConfigPath, args.EnvPath); err != nil {
+		slog.Error("failed to read configuration", "error", err)
+		os.Exit(1)
+	}
 
 	router := setupRouter()
 
@@ -25,12 +46,9 @@ func main() {
 
 	router.Any(path+"*", echo.WrapHandler(handler))
 
-	host := "127.0.0.1"
-	port := "9000"
+	pingServer := setupHTTPServer(net.JoinHostPort(cfg.Host, fmt.Sprint(cfg.Port)), router)
 
-	pingServer := setupHTTPServer(net.JoinHostPort(host, port), router)
-
-	slog.Info("starting core", "host", host, "port", port)
+	slog.Info("starting core", "host", cfg.Host, "port", cfg.Port)
 
 	if err := pingServer.ListenAndServe(); err != nil && err != http.ErrServerClosed {
 		slog.Error("ping server error", "err", err)

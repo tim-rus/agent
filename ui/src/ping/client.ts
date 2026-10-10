@@ -3,7 +3,7 @@ import { createConnectTransport } from "@connectrpc/connect-web";
 import { PingService } from "../gen/ping_pb";
 
 const transport = createConnectTransport({
-	baseUrl: "http://localhost:9000",
+	baseUrl: import.meta.env["VITE_RPC_BASE_URL"] || "http://localhost:8080",
 	useBinaryFormat: false,
 });
 

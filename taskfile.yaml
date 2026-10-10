@@ -7,16 +7,16 @@ tasks:
 
   run:core:
     dir: "./core"
-    cmd: go run ./cmd/core
+    cmd: go run ./cmd/core -- -c ../config/core.dev.config.yaml -e ../config/.env.core
 
   run:tg:
     dir: "./tg"
-    cmd: python main.py
+    cmd: ENV_FILE="../config/.env.tg.dev" CONFIG_FILE="../config/tg.dev.config.yaml" python main.py
 
   run:ui:
     dir: "./ui"
-    cmd: npm run dev
+    cmd: CONFIG_PATH="../config" MODE="ui.dev" npm run dev
 
   run:admin:
     dir: "./admin"
-    cmd: npm run dev
+    cmd: CONFIG_PATH="../config" MODE="admin.dev" npm run dev

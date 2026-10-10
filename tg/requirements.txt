@@ -1,2 +1,4 @@
 betterproto==1.2.5
 connectrpc==0.11.1
+PyYAML==6.0.3
+python-dotenv==1.2.3
