@@ -1,0 +1,23 @@
+networks:
+  agent_net:
+    driver: bridge
+
+services:
+
+  core:
+    env_file:
+      - ./config/.env.core
+    build:
+      context: .
+      dockerfile: docker/core.Dockerfile
+    container_name: core
+    ports:
+      - 90:9000
+    volumes:
+      - ${CONFIG_PATH}:${APP_CONFIG_PATH}:ro
+    environment:
+      CONFIG_FILE: ${APP_CONFIG_PATH}/core.config.yaml
+      ENV_FILE: ${APP_CONFIG_PATH}/.env.core
+    networks:
+      - agent_net
+    # restart: unless-stopped
