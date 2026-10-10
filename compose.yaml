@@ -21,3 +21,19 @@ services:
     networks:
       - agent_net
     # restart: unless-stopped
+
+  tg:
+      env_file:
+        - ./config/.env.tg
+      build:
+        context: .
+        dockerfile: docker/tg.Dockerfile
+      container_name: tg
+      volumes:
+        - ${CONFIG_PATH}:${APP_CONFIG_PATH}:ro
+      environment:
+        ENV_FILE: "${APP_CONFIG_PATH}/.env.tg"
+        CONFIG_FILE: "${APP_CONFIG_PATH}/tg.config.yaml"
+      networks:
+        - agent_net
+      # restart: unless-stopped

@@ -10,6 +10,9 @@ tasks:
   compose:core:
     cmd: docker compose --env-file ./config/.env.docker up -d --build core
 
+  compose:tg:
+    cmd: docker compose --env-file ./config/.env.docker up -d --build tg
+
   # loggers
 
   logs:
@@ -17,6 +20,9 @@ tasks:
 
   logs:core:
     cmd: docker compose --env-file ./config/.env.docker logs -t -f --tail=100 core
+
+  logs:tg:
+    cmd: docker compose --env-file ./config/.env.docker logs -t -f --tail=100 tg
 
   # runners
 
