@@ -16,3 +16,7 @@ tasks:
   run:ui:
     dir: "./ui"
     cmd: npm run dev
+
+  run:admin:
+    dir: "./admin"
+    cmd: npm run dev
