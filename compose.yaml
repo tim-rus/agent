@@ -56,3 +56,22 @@ services:
       networks:
         - agent_net
       # restart: unless-stopped
+
+  admin:
+      build:
+        context: .
+        dockerfile: docker/admin.Dockerfile
+        args:
+          CONFIG_PATH: ${CONFIG_PATH}
+          MODE: "admin"
+      container_name: admin
+      ports:
+        - 8081:80
+      volumes:
+        - type: bind
+          source: ${CONFIG_PATH}
+          target: ${APP_CONFIG_PATH}
+          read_only: true
+      networks:
+        - agent_net
+      # restart: unless-stopped

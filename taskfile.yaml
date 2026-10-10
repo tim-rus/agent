@@ -16,6 +16,9 @@ tasks:
   compose:ui:
     cmd: docker compose --env-file ./config/.env.docker up -d --build ui
 
+  compose:admin:
+    cmd: docker compose --env-file ./config/.env.docker up -d --build admin
+
   # loggers
 
   logs:
@@ -29,6 +32,9 @@ tasks:
 
   logs:ui:
     cmd: docker compose --env-file ./config/.env.docker logs -t -f --tail=100 ui
+
+  logs:admin:
+    cmd: docker compose --env-file ./config/.env.docker logs -t -f --tail=100 admin
 
   # runners
 
